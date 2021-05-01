@@ -1,0 +1,35 @@
+name: Exercise_9_release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  RELEASE:
+    name: Release_job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout_step
+        uses: actions/checkout@v2.3.4
+      - name: Install_step
+        run: sudo apt-get install build-essential
+          sudo apt-get install zip
+      - name: Build_step
+        run: make
+      - name: Test_step
+        run: make check_stack
+          make check_expr
+      - name: Run_step
+        run: make STR="2*(3-(4+2))-((1-6)/3)" run
+      - name: Zip_step
+        run: cd build
+          zip -r program.zip main ../docs
+      - name: Release_step
+        uses: marvinpinto/action-automatic-releases@v1.1.1
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: latest
+          prerelease: true
+          title: Latest Version
+          files: build/program.zip
